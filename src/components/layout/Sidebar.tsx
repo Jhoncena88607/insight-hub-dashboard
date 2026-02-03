@@ -12,7 +12,6 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
-  Menu,
 } from "lucide-react";
 
 interface SidebarContextType {
@@ -42,7 +41,9 @@ export const SidebarProvider = ({ children }: SidebarProviderProps) => {
 
   return (
     <SidebarContext.Provider value={{ collapsed, setCollapsed, toggleCollapsed }}>
-      {children}
+      <div className="flex min-h-screen w-full">
+        {children}
+      </div>
     </SidebarContext.Provider>
   );
 };
@@ -64,27 +65,25 @@ export const AppSidebar = () => {
 
   return (
     <aside
-      className={`fixed left-0 top-0 h-screen bg-sidebar border-r border-sidebar-border flex flex-col transition-all duration-300 z-50 ${
-        collapsed ? "w-sidebar-collapsed" : "w-sidebar"
+      className={`relative h-screen bg-sidebar border-r border-sidebar-border flex flex-col transition-all duration-300 ease-in-out flex-shrink-0 ${
+        collapsed ? "w-[70px]" : "w-[260px]"
       }`}
     >
       {/* Logo */}
-      <div className="p-6 flex items-center justify-between border-b border-sidebar-border">
-        <div className="flex items-center gap-2 overflow-hidden">
-          <span className="text-2xl font-bold text-foreground whitespace-nowrap">
-            {collapsed ? (
-              <span className="text-primary">F</span>
-            ) : (
-              <>
-                FRAC<span className="text-primary">T</span>IQ
-              </>
-            )}
-          </span>
-        </div>
+      <div className={`h-16 flex items-center border-b border-sidebar-border ${collapsed ? "px-4 justify-center" : "px-6"}`}>
+        <span className="text-2xl font-bold text-foreground whitespace-nowrap overflow-hidden">
+          {collapsed ? (
+            <span className="text-primary">F</span>
+          ) : (
+            <>
+              FRAC<span className="text-primary">T</span>IQ
+            </>
+          )}
+        </span>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 py-6 overflow-y-auto">
+      <nav className="flex-1 py-4 overflow-y-auto overflow-x-hidden">
         <ul className="space-y-1 px-3">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path;
@@ -94,21 +93,19 @@ export const AppSidebar = () => {
               <li key={item.path}>
                 <Link
                   to={item.path}
-                  className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 group ${
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group ${
                     isActive
-                      ? "bg-primary text-primary-foreground"
+                      ? "bg-primary text-primary-foreground shadow-sm"
                       : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                   }`}
                   title={collapsed ? item.label : undefined}
                 >
                   <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? "" : "group-hover:text-primary"}`} />
-                  <span
-                    className={`whitespace-nowrap transition-opacity duration-200 ${
-                      collapsed ? "opacity-0 w-0" : "opacity-100"
-                    }`}
-                  >
-                    {item.label}
-                  </span>
+                  {!collapsed && (
+                    <span className="whitespace-nowrap text-sm font-medium">
+                      {item.label}
+                    </span>
+                  )}
                 </Link>
               </li>
             );
@@ -116,10 +113,10 @@ export const AppSidebar = () => {
         </ul>
       </nav>
 
-      {/* Collapse Toggle */}
+      {/* Collapse Toggle Button */}
       <button
         onClick={toggleCollapsed}
-        className="absolute -right-3 top-20 bg-card border border-border rounded-full p-1.5 shadow-md hover:bg-muted transition-colors"
+        className="absolute -right-3 top-20 z-10 bg-card border border-border rounded-full p-1.5 shadow-md hover:bg-muted hover:shadow-lg transition-all duration-200"
         aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
       >
         {collapsed ? (
@@ -132,34 +129,17 @@ export const AppSidebar = () => {
       {/* Logout */}
       <div className="p-3 border-t border-sidebar-border">
         <button
-          className={`flex items-center gap-3 px-3 py-3 rounded-lg w-full text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200 group`}
+          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg w-full text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200 group`}
           title={collapsed ? "Logout" : undefined}
         >
           <LogOut className="w-5 h-5 flex-shrink-0 group-hover:text-primary" />
-          <span
-            className={`whitespace-nowrap transition-opacity duration-200 ${
-              collapsed ? "opacity-0 w-0" : "opacity-100"
-            }`}
-          >
-            Logout
-          </span>
+          {!collapsed && (
+            <span className="whitespace-nowrap text-sm font-medium">
+              Logout
+            </span>
+          )}
         </button>
       </div>
     </aside>
-  );
-};
-
-// Mobile sidebar toggle
-export const MobileSidebarTrigger = () => {
-  const { toggleCollapsed } = useSidebar();
-
-  return (
-    <button
-      onClick={toggleCollapsed}
-      className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-card border border-border rounded-lg shadow-md"
-      aria-label="Toggle sidebar"
-    >
-      <Menu className="w-5 h-5" />
-    </button>
   );
 };

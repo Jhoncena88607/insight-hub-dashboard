@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { Search, Bell, MoreVertical } from "lucide-react";
-import { useSidebar, AppSidebar, SidebarProvider } from "./Sidebar";
+import { AppSidebar, SidebarProvider } from "./Sidebar";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -9,23 +9,17 @@ interface DashboardLayoutProps {
 }
 
 const LayoutContent = ({ children, title, showSearch = true }: DashboardLayoutProps) => {
-  const { collapsed } = useSidebar();
-
   return (
-    <div className="min-h-screen bg-background flex w-full">
+    <>
       <AppSidebar />
       
-      {/* Main Content */}
-      <div
-        className={`flex-1 transition-all duration-300 ${
-          collapsed ? "ml-sidebar-collapsed" : "ml-sidebar"
-        }`}
-      >
+      {/* Main Content - takes remaining space */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Top Header */}
-        <header className="sticky top-0 z-40 bg-background border-b border-border">
+        <header className="sticky top-0 z-30 bg-background border-b border-border flex-shrink-0">
           <div className="flex items-center justify-between h-16 px-6">
             {/* Title */}
-            <h1 className="text-xl font-semibold text-foreground">
+            <h1 className="text-xl font-semibold text-foreground truncate">
               {title || "Overview"}
             </h1>
 
@@ -54,12 +48,12 @@ const LayoutContent = ({ children, title, showSearch = true }: DashboardLayoutPr
           </div>
         </header>
 
-        {/* Page Content */}
-        <main className="p-6 animate-fade-in">
+        {/* Page Content - scrollable area */}
+        <main className="flex-1 overflow-y-auto p-6 animate-fade-in">
           {children}
         </main>
       </div>
-    </div>
+    </>
   );
 };
 
